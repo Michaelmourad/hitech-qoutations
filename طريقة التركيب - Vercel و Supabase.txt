@@ -1,0 +1,81 @@
+HiTech — التركيب على Supabase و Vercel و GitHub
+==============================================
+
+### الخطوة 2: Supabase (قاعدة البيانات)
+1. ادخل **supabase.com** ← **Start your project**، وسجّل بإيميل الشخص أو بحساب GitHub بتاعه.
+2. **New project**:
+   - Name: أي اسم.
+   - Database Password: كلمة سر قوية، احفظها عندك.
+   - Region: **Central EU (Frankfurt)**.
+   - **Create**، واستنى دقيقتين لحد ما يجهز.
+3. من القايمة اللي على الشمال: **SQL Editor** ← **New query**. افتح `supabase-setup.sql` بالـ Notepad، وانسخ كل اللي فيه، والصقه، واضغط **Run**. لازم يظهر **Success**.
+4. اعمل حساب الدخول: **Authentication** ← **Users** ← **Add user** ← **Create new user**. اكتب الإيميل وكلمة السر، وعلّم على **Auto Confirm User**، وبعدين **Create user**.
+5. اقفل التسجيل لأي حد تاني (مهم للأمان):
+   - **Authentication** ← **Sign In / Providers**. في الإصدارات الأحدث ممكن تكون **Authentication** ← **Settings** ← **User Signups**.
+   - اقفل **Allow new users to sign up** واضغط **Save**.
+   - ⚠ **«مش لاقيه»:** الاختيار ده بيبقى في أول صفحة Sign In / Providers فوق، مش جوه Email. لو مش ظاهر، دوّر على كلمة "sign up" في صفحة Authentication.
+6. هات بيانات الربط:
+   - **Project Settings** (علامة الترس تحت على الشمال) ← **Data API** لقيمة **Project URL**، وشكلها `https://xxxx.supabase.co`.
+   - **Project Settings** ← **API Keys** لقيمة **Publishable key**، وبتبدأ بـ `sb_publishable_`.
+   - ⚠ **«Project Settings مش لاقيها»:** هي أيقونة الترس ⚙️ في آخر القايمة اللي على الشمال تحت خالص. لو القايمة مقفولة، وسّعها بالسهم.
+   - ⚠ في المشاريع القديمة المفتاح اسمه **anon public** وبيبدأ بـ `eyJ`. الاتنين شغالين.
+   - ⚠ **ممنوع** تستخدم **secret key** (`sb_secret_`) أو **service_role**، ولا تبعتهم لحد.
+7. احفظ القيمتين في ملف اسمه `.env` على الكمبيوتر بس، بنفس شكل `.env.example`.
+
+### الخطوة 3: GitHub (مكان ملفات الموقع)
+⚠ **«ليه هرفع على GitHub؟»:** عشان Vercel بيقرا الموقع من هناك، وبينشر أي تحديث لوحده. المفاتيح ما بتترفعش هناك أبدًا.
+1. ادخل **github.com**، واعمل حساب للشخص أو ادخل بحسابه.
+2. **+** فوق ← **New repository**:
+   - الاسم **بحروف إنجليزي صغيرة من غير مسافات**، مثلًا `ahmed-quotes`.
+   - اختار **Public** أو **Private**.
+   - **Create repository**.
+3. في صفحة المستودع: **uploading an existing file**، أو **Add file** ← **Upload files**:
+   - اسحب الملفات كلها **ماعدا فولدر api و `.env`**.
+   - **Commit changes**.
+   - ⚠ ملفات النقطة (`.gitignore` و `.env.example`) ممكن ما تظهرش في الويندوز. لو مش ظاهرة، فعّل **Hidden items** من View، أو كمّل من غيرها، فهي مش ضرورية لشغل الموقع.
+4. اعمل ملف `api/config.js` يدوي، لأن الفولدر ما بيترفعش بالسحب:
+   - **Add file** ← **Create new file**.
+   - اكتب في خانة الاسم `api/config.js`. أول ما تكتب `/` الفولدر بيتعمل لوحده.
+   - افتح `api/config.js` من الـ zip بالـ Notepad، وانسخ محتواه، والصقه.
+   - **Commit changes**.
+   - ⚠ اتأكد إن الاسم `api/config.js` بالظبط، مش `config.js` لوحده. ولو كان فيه `config.js` في الصفحة الرئيسية للمستودع، امسحه: اضغط عليه ← **⋯** ← **Delete file** ← **Commit**.
+5. **ممنوع ترفع `.env`**.
+6. ⚠ **ما تفعّلش GitHub Pages:** الموقع هيشتغل من Vercel بس. لو ظهر **github-pages ❌** في Deployments، اقفله من **Settings** ← **Pages** ← **Source: None**.
+
+### الخطوة 4: Vercel (نشر الموقع)
+⚠ مواقع netlify.app محجوبة في مصر. Vercel شغال.
+1. ادخل **vercel.com** ← **Sign Up** ← **Continue with GitHub** بحساب الشخص.
+2. **Add New…** ← **Project** ← **Import** جنب المستودع.
+   - ⚠ لو المستودع مش ظاهر: **Adjust GitHub App Permissions** ← اختار المستودع ← **Save**.
+3. صفحة الإعداد:
+   - **Project Name: بحروف إنجليزي صغيرة وشرطة بس**، مثلًا `ahmed-quotes`.
+   - ⚠ أي حرف كبير أو مسافة أو حرف عربي بيطلع خطأ.
+   - **Framework Preset: Other**، وسيب الباقي زي ما هو.
+4. افتح **Environment Variables** **قبل Deploy**، وضيف اتنين:
+   - Key: `SUPABASE_URL` / Value: الـ Project URL.
+   - Key: `SUPABASE_PUBLISHABLE_KEY` / Value: الـ Publishable key.
+   - ⚠ من غير مسافات قبل القيمة أو بعدها.
+5. **Deploy**، واستنى لحد ما يظهر **Congratulations**.
+6. ⚠ لو نسيت المتغيرات أو ضفتها بعد النشر: **Settings** ← **Environment Variables** ← ضيفها ← **Save**. بعدين **Deployments** ← آخر واحد ← **⋯** ← **Redeploy**.
+7. **اختبار الربط:** افتح `https://اسم-المشروع.vercel.app/config.js`.
+   - لازم تشوف سطر فيه `supabaseUrl` والـ URL.
+   - لو القيم فاضية، المتغيرات ناقصة أو محتاج Redeploy.
+   - لو ظهر 404، ملف `api/config.js` مش في مكانه، فارجع للخطوة 3-4.
+
+### الخطوة 5: أول تشغيل
+1. افتح `https://اسم-المشروع.vercel.app` وسجّل دخول بالإيميل وكلمة السر اللي اتعملوا في الخطوة 2-4.
+   - ⚠ لو ظهر «البريد الإلكتروني أو كلمة المرور غير صحيحة»، اتأكد إنك علّمت **Auto Confirm User**، أو اعمل المستخدم من جديد.
+2. على الموبايل: افتح الرابط في Chrome ← **⋮** ← **إضافة إلى الشاشة الرئيسية**. على الآيفون: Safari ← مشاركة ← **إضافة إلى الشاشة الرئيسية**.
+3. اعمل عرض سعر تجريبي واحفظه، وافتح الرابط من جهاز تاني، وتأكد إنه ظاهر في **السجل**.
+4. ⚠ البيانات القديمة ما بتتنقلش لوحدها. اللي عاوز يدخل بيانات قديمة يدخلها يدوي، ويغيّر التاريخ للتاريخ القديم.
+
+### بعد كده (التحديثات)
+- أي تعديل: ارفع `index.html` و `sw.js` بس على GitHub (**Add file** ← **Upload files**، وهتحل محل القديم) ← **Commit**. Vercel بينشره لوحده في دقيقة.
+- ⚠ بعد كل تحديث: اعمل **ريفريش مرتين**. على الموبايل، اقفل التطبيق خالص وافتحه تاني.
+- ⚠ **«هل هحتاج أرجع لـ Supabase؟»:** لأ، إلا لو عاوز تضيف مستخدم، أو تغيّر كلمة السر، أو تشوف البيانات في **Table Editor** ← **documents**.
+- ⚠ الخروج التلقائي بعد 5 دقايق من غير استخدام طبيعي. سجّل دخول تاني.
+
+### المفاتيح والأمان
+- `.env` على الكمبيوتر بس، و Environment Variables على Vercel بس. ما يترفعوش على GitHub.
+- الـ Publishable key بيظهر في المتصفح، وده طبيعي. البيانات محمية بقواعد RLS اللي `supabase-setup.sql` بيعملها، وكل مستخدم بيشوف بياناته بس.
+- التسجيل الجديد لازم يفضل مقفول (الخطوة 2-5).
